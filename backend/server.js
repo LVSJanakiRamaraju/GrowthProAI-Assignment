@@ -1,10 +1,28 @@
 const express = require('express');
 const cors = require('cors');
 const generateHeadline  = require('./generateHeadline');
+require('dotenv').config();
 
 const app = express();
 app.use(cors());
 app.use(express.json());
+
+const allowedOrigins = [
+    `${process.env.FRONTEND_URL}`,
+  'http://localhost:5173',
+];
+
+app.use(cors({
+  origin: function (origin, callback) {
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
+  credentials: true,
+}));
+
 
 const PORT = 5000;
 
