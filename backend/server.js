@@ -27,6 +27,22 @@ app.post('/business-data', (req, res) => {
   res.json(data);
 });
 
+app.get('/regenerate-headline', (req, res) => {
+  const { name, location } = req.query;
+
+    if(!name) {
+        console.log("error");
+        return res.status(400).json({ error: 'Business Name is required' });
+    }
+    if(!location) {
+        return res.status(400).json({ error: 'Business location is required' });
+    }
+
+  const headline = generateHeadline(name, location);
+  res.json({ headline });
+});
+
+
 app.listen(PORT, () => {
   console.log(`Server running on http://localhost:${PORT}`);
 });

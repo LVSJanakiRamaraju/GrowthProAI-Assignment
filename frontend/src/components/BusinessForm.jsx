@@ -11,7 +11,10 @@ const BusinessForm = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!name || !location) return;
+    if (!name || !location) {
+      alert('Name and location are required');
+      return;
+    }
 
     try {
       setLoading(true);
@@ -23,6 +26,25 @@ const BusinessForm = () => {
       setBusinessData({ ...res.data, name, location });
     } catch (err) {
       console.error('Error fetching business data:', err);
+    } finally {
+      setLoading(false);
+    }                                                                                                                                                                                                           
+  };
+
+    const regenerateHeadline = async () => {
+    if (!name || !location) {
+      alert('Name and location are required to regenerate the headline');
+      return;
+    }
+    try {
+      setLoading(true);
+      const API = import.meta.env.VITE_API;
+      const res = await axios.get(`${API}/regenerate-headline`, {
+        params: { name, location }
+      });
+      setBusinessData(prev => ({ ...prev, headline: res.data.headline }));
+    } catch (err) {
+      console.error('Error regenerating headline:', err);
     } finally {
       setLoading(false);
     }
@@ -62,6 +84,7 @@ const BusinessForm = () => {
         {businessData && (
         <DisplayCard
           data={businessData}
+          onRegenerate={regenerateHeadline}
         />
       )}
     </div>
