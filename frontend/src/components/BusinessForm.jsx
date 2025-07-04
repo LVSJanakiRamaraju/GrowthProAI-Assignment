@@ -1,13 +1,14 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import DisplayCard from './DisplayCard';
+import LoadingSpinner from './LoadingSpinner';
+import { useBusiness } from '../context/BusinessContext';
 
 
 const BusinessForm = () => {
   const [name, setName] = useState('');
   const [location, setLocation] = useState('');
-  const [businessData, setBusinessData] = useState(null);
-  const [loading, setLoading] = useState(false);
+  const { businessData, setBusinessData, loading, setLoading } = useBusiness();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -40,7 +41,7 @@ const BusinessForm = () => {
       setLoading(true);
       const API = import.meta.env.VITE_API;
       const res = await axios.get(`${API}/regenerate-headline`, {
-        params: { name, location }
+        params: { name:businessData.name , location:businessData.location }
       });
       setBusinessData(prev => ({ ...prev, headline: res.data.headline }));
     } catch (err) {
@@ -79,7 +80,7 @@ const BusinessForm = () => {
         </button>
       </form>
 
-      {loading && <p className="text-center text-gray-500">Loading...</p>}
+      {loading &&  <LoadingSpinner />}
 
         {businessData && (
         <DisplayCard
